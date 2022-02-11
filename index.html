@@ -1,0 +1,992 @@
+
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="profile" href="https://gmpg.org/xfn/11" />
+	<title>【公式】BreakOut２ &#8211; 大学生投資家によるお金のブログ</title>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=134'
+					+ '&is_singular=';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9icmVha291dDIuY29t"
+		+ "&wpcomid=190520822"
+		+ "&time=1644588360";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//breakout2.wordpress.com' />
+<link rel='dns-prefetch' href='//wordpress.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="【公式】BreakOut２ &raquo; フィード" href="https://breakout2.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="【公式】BreakOut２ &raquo; コメントフィード" href="https://breakout2.com/comments/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1625065786h&ver=5.9-RC3-52603"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([10084,65039,8205,55357,56613],[10084,65039,8203,55357,56613])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJytj0lOQzEQRC+E3foDwwZxFn+7ZTq0B7ntRL49DoLwiYTCgmWp9J6q4JSVTbFirBCaytw8RYFTtikoCcTYr5K2Ineww74Y30bcsPjRFITjNOt7vcLWiB1snOybYtqKKR2kdsb/ENVXDN8iipabQ4GDQEBHBnnU52e7kNl0LIrRG9t1oHgbH90+/4B+H/+xdMiwZnOebHpqVflC7s//rxTFVIpebuA2fWKznp70pIRCZgRHUi+duihewvP0sK7L8jivy+Edx8/EAw==?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--primary: #CD2220;--wp--preset--color--secondary: #007AB7;--wp--preset--color--foreground: #303030;--wp--preset--color--background: #FFFFFF;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 16.6px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 26.45px;--wp--preset--font-size--x-large: 42px;--wp--preset--font-size--normal: 20px;--wp--preset--font-size--huge: 30.4174px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-primary-color{color: var(--wp--preset--color--primary) !important;}.has-secondary-color{color: var(--wp--preset--color--secondary) !important;}.has-foreground-color{color: var(--wp--preset--color--foreground) !important;}.has-background-color{color: var(--wp--preset--color--background) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-primary-background-color{background-color: var(--wp--preset--color--primary) !important;}.has-secondary-background-color{background-color: var(--wp--preset--color--secondary) !important;}.has-foreground-background-color{background-color: var(--wp--preset--color--foreground) !important;}.has-background-background-color{background-color: var(--wp--preset--color--background) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-primary-border-color{border-color: var(--wp--preset--color--primary) !important;}.has-secondary-border-color{border-color: var(--wp--preset--color--secondary) !important;}.has-foreground-border-color{border-color: var(--wp--preset--color--foreground) !important;}.has-background-border-color{border-color: var(--wp--preset--color--background) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}.has-normal-font-size{font-size: var(--wp--preset--font-size--normal) !important;}.has-huge-font-size{font-size: var(--wp--preset--font-size--huge) !important;}
+</style>
+<link rel='stylesheet' id='all-css-2-1' href='https://s0.wp.com/_static/??-eJx9zEEOwkAIBdALiaTWaDfGs7QjUXSYIYVJr18aExfGuCHw4YGLQqrFqThKA83tzsUw1ZkiFx0d40LoxiNlkjjbJ7Md/maLhoFp0pnMIKpwE/BHQPvnQm2vIfOLYrKv5E0ZS3UObZ9mW1zl0h3703noD0P3XAFDZ01X?cssminify=yes' type='text/css' media='all' />
+<link rel='stylesheet' id='print-css-3-1' href='https://s0.wp.com/wp-content/themes/pub/varia/print.css?m=1571655471h&cssminify=yes' type='text/css' media='print' />
+<link rel='stylesheet' id='all-css-4-1' href='https://s0.wp.com/_static/??-eJx9jUEKwjAQRS9kHMW24EI8S5qOMZJkhsykxdsbcVOxuHsf3uPDwsZRVswKeseEAlxHSFQmzCD6jLh3IjvY9mZbgoWQ3Uc1CztKP0GqhmP1IQssYfKoAkpsmKTR9scq8UgmkrMaKH8Nc4s2lH9pwTGSb+ihWav5jq7pchy67tSf++HweAEeAGK/?cssminify=yes' type='text/css' media='all' />
+<link crossorigin="anonymous" rel='stylesheet' id='morden-fonts-css'  href='https://fonts.googleapis.com/css?family=Noto+Sans%3A400%2C400i%2C700%2C700i&#038;subset=latin%2Clatin-ext' media='all' />
+<link rel='stylesheet' id='all-css-6-1' href='https://s0.wp.com/wp-content/themes/pub/morden/style.css?m=1644359560h&cssminify=yes' type='text/css' media='all' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link rel='stylesheet' id='all-css-8-1' href='https://s0.wp.com/_static/??-eJxti0EKgCAQAD+UbVFGHaK3mJgaqyut0vejQ4eo0zAwA2cSmmI2MUMoImGxPjIk4iw2VP4Adurw0T6sNXMF/xeT9goFkqW3fKbsTDAMrgeLtCq8gyXM7dCNUjZy6vcLZTc31Q==?cssminify=yes' type='text/css' media='all' />
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"190520822","siteURL":"https:\/\/breakout2.com","xhrURL":"https:\/\/breakout2.com\/wp-admin\/admin-ajax.php","nonce":"55644c3a9b","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","shortlink":"https:\/\/wp.me\/PcTpau-2a","i18n":{"followedText":"\u4eca\u5f8c\u3053\u306e\u30b5\u30a4\u30c8\u306e\u65b0\u3057\u3044\u6295\u7a3f\u304c <a href=\"https:\/\/wordpress.com\/\">Reader<\/a> \u306b\u8868\u793a\u3055\u308c\u307e\u3059","foldBar":"\u3053\u306e\u30d0\u30fc\u3092\u6298\u308a\u305f\u305f\u3080","unfoldBar":"\u3053\u306e\u30d0\u30fc\u3092\u5c55\u958b"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??/wp-content/js/mobile-useragent-info.js,/wp-content/js/rlt-proxy.js?m=1637704497j'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://breakout2.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s0.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="https://breakout2.com/" />
+<link rel='shortlink' href='https://wp.me/PcTpau-2a' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Fbreakout2.com%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Fbreakout2.com%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="【公式】BreakOut２" />
+<meta property="og:description" content="大学生投資家によるお金のブログ" />
+<meta property="og:url" content="https://breakout2.com/" />
+<meta property="og:site_name" content="【公式】BreakOut２" />
+<meta property="og:image" content="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png" />
+<meta property="og:image:width" content="1280" />
+<meta property="og:image:height" content="720" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:text:title" content="BreakOut２ investment Blog" />
+<meta name="twitter:image" content="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=640" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="search" type="application/opensearchdescription+xml" href="https://breakout2.com/osd.xml" title="【公式】BreakOut２" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="application-name" content="【公式】BreakOut２" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="大学生投資家によるお金のブログ" /><meta name="msapplication-task" content="name=登録;action-uri=https://breakout2.com/feed/;icon-uri=https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=16" /><meta name="msapplication-task" content="name=無料ブログを作成;action-uri=http://wordpress.com/signup/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com サポート;action-uri=http://support.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com フォーラム;action-uri=http://forums.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="description" content="記事カテゴリ 米株や日本株に関する考察、知識、注目銘柄など FXやCFDなどのレバレッジを利用した取引について&hellip;" />
+<!-- この URL で利用できる AMP HTML バージョンはありません。 --><link rel="icon" href="https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=32" sizes="32x32" />
+<link rel="icon" href="https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=192" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=180" />
+<meta name="msapplication-TileImage" content="https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=270" />
+		<link rel="stylesheet" id="custom-css-css" type="text/css" href="https://s0.wp.com/?custom-css=1&#038;csblog=cTpau&#038;cscache=6&#038;csrev=21" />
+		<!-- Your Google Analytics Plugin is missing the tracking ID -->
+</head>
+
+<body class="home page-template-default page page-id-134 wp-embed-responsive customizer-styles-applied singular image-filters-enabled hide-homepage-title mobile-nav-side highlander-enabled highlander-light">
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-dark-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0.49803921568627" /><feFuncG type="table" tableValues="0 0.49803921568627" /><feFuncB type="table" tableValues="0 0.49803921568627" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.54901960784314 0.98823529411765" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.71764705882353 0.25490196078431" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-red"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 0.27843137254902" /><feFuncB type="table" tableValues="0.5921568627451 0.27843137254902" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-midnight"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0" /><feFuncG type="table" tableValues="0 0.64705882352941" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-magenta-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.78039215686275 1" /><feFuncG type="table" tableValues="0 0.94901960784314" /><feFuncB type="table" tableValues="0.35294117647059 0.47058823529412" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-green"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.65098039215686 0.40392156862745" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.44705882352941 0.4" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-orange"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.098039215686275 1" /><feFuncG type="table" tableValues="0 0.66274509803922" /><feFuncB type="table" tableValues="0.84705882352941 0.41960784313725" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg>
+<div id="page" class="site">
+	<a class="skip-link screen-reader-text" href="#content">コンテンツへスキップ</a>
+
+	
+<header id="masthead" class="site-header" role="banner">
+	<div class="site-header-wrap responsive-max-width has-title-and-tagline has-menu">
+		
+
+			<p class="site-title"><a href="https://breakout2.com/" rel="home">【公式】BreakOut２</a></p>
+	
+		<p class="site-description">
+			大学生投資家によるお金のブログ		</p>
+			<nav id="site-navigation" class="main-navigation" aria-label="メインナビゲーション">
+
+		<input type="checkbox" role="button" aria-haspopup="true" id="toggle" class="hide-visually">
+		<label for="toggle" id="toggle-menu" class="button">
+			メニュー			<span class="dropdown-icon open">+</span>
+			<span class="dropdown-icon close">&times;</span>
+			<span class="hide-visually expanded-text">開いた状態</span>
+			<span class="hide-visually collapsed-text">閉じた状態</span>
+		</label>
+
+		<div class="main-menu-container"><ul id="menu-primary-1" class="main-menu" aria-label="submenu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21"><a href="https://breakout2.com/blog/">[すべての記事]</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-728"><a href="https://breakout2.com/401-2/">[FX,CFD]</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-731"><a href="https://breakout2.com/301-2/">[日本株・米国株]</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-729"><a href="https://breakout2.com/222-2/">[暗号資産]</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-328"><a href="https://breakout2.com/contact/" aria-haspopup="true" aria-expanded="false">[運営について]</a>
+<ul class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-812"><a href="https://breakout2.com/contact/">支援する</a></li>
+</ul>
+</li>
+</ul></div>	</nav><!-- #site-navigation -->
+			<nav class="social-navigation" role="navigation" aria-label="﻿ソーシャルリンクメニュー">
+		<div class="menu-social-container"><ul id="menu-social" class="social-links-menu"><li id="menu-item-25" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-25"><a href="https://twitter.com/BreakOu43279998"><span class="screen-reader-text">Twitter</span><svg class="svg-icon" width="26" height="26" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M22.23,5.924c-0.736,0.326-1.527,0.547-2.357,0.646c0.847-0.508,1.498-1.312,1.804-2.27 c-0.793,0.47-1.671,0.812-2.606,0.996C18.324,4.498,17.257,4,16.077,4c-2.266,0-4.103,1.837-4.103,4.103 c0,0.322,0.036,0.635,0.106,0.935C8.67,8.867,5.647,7.234,3.623,4.751C3.27,5.357,3.067,6.062,3.067,6.814 c0,1.424,0.724,2.679,1.825,3.415c-0.673-0.021-1.305-0.206-1.859-0.513c0,0.017,0,0.034,0,0.052c0,1.988,1.414,3.647,3.292,4.023 c-0.344,0.094-0.707,0.144-1.081,0.144c-0.264,0-0.521-0.026-0.772-0.074c0.522,1.63,2.038,2.816,3.833,2.85 c-1.404,1.1-3.174,1.756-5.096,1.756c-0.331,0-0.658-0.019-0.979-0.057c1.816,1.164,3.973,1.843,6.29,1.843 c7.547,0,11.675-6.252,11.675-11.675c0-0.178-0.004-0.355-0.012-0.531C20.985,7.47,21.68,6.747,22.23,5.924z"></path></svg></a></li>
+<li id="menu-item-26" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-26"><a href="https://instagram.com"><span class="screen-reader-text">Instagram</span><svg class="svg-icon" width="26" height="26" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M12,4.622c2.403,0,2.688,0.009,3.637,0.052c0.877,0.04,1.354,0.187,1.671,0.31c0.42,0.163,0.72,0.358,1.035,0.673 c0.315,0.315,0.51,0.615,0.673,1.035c0.123,0.317,0.27,0.794,0.31,1.671c0.043,0.949,0.052,1.234,0.052,3.637 s-0.009,2.688-0.052,3.637c-0.04,0.877-0.187,1.354-0.31,1.671c-0.163,0.42-0.358,0.72-0.673,1.035 c-0.315,0.315-0.615,0.51-1.035,0.673c-0.317,0.123-0.794,0.27-1.671,0.31c-0.949,0.043-1.233,0.052-3.637,0.052 s-2.688-0.009-3.637-0.052c-0.877-0.04-1.354-0.187-1.671-0.31c-0.42-0.163-0.72-0.358-1.035-0.673 c-0.315-0.315-0.51-0.615-0.673-1.035c-0.123-0.317-0.27-0.794-0.31-1.671C4.631,14.688,4.622,14.403,4.622,12 s0.009-2.688,0.052-3.637c0.04-0.877,0.187-1.354,0.31-1.671c0.163-0.42,0.358-0.72,0.673-1.035 c0.315-0.315,0.615-0.51,1.035-0.673c0.317-0.123,0.794-0.27,1.671-0.31C9.312,4.631,9.597,4.622,12,4.622 M12,3 C9.556,3,9.249,3.01,8.289,3.054C7.331,3.098,6.677,3.25,6.105,3.472C5.513,3.702,5.011,4.01,4.511,4.511 c-0.5,0.5-0.808,1.002-1.038,1.594C3.25,6.677,3.098,7.331,3.054,8.289C3.01,9.249,3,9.556,3,12c0,2.444,0.01,2.751,0.054,3.711 c0.044,0.958,0.196,1.612,0.418,2.185c0.23,0.592,0.538,1.094,1.038,1.594c0.5,0.5,1.002,0.808,1.594,1.038 c0.572,0.222,1.227,0.375,2.185,0.418C9.249,20.99,9.556,21,12,21s2.751-0.01,3.711-0.054c0.958-0.044,1.612-0.196,2.185-0.418 c0.592-0.23,1.094-0.538,1.594-1.038c0.5-0.5,0.808-1.002,1.038-1.594c0.222-0.572,0.375-1.227,0.418-2.185 C20.99,14.751,21,14.444,21,12s-0.01-2.751-0.054-3.711c-0.044-0.958-0.196-1.612-0.418-2.185c-0.23-0.592-0.538-1.094-1.038-1.594 c-0.5-0.5-1.002-0.808-1.594-1.038c-0.572-0.222-1.227-0.375-2.185-0.418C14.751,3.01,14.444,3,12,3L12,3z M12,7.378 c-2.552,0-4.622,2.069-4.622,4.622S9.448,16.622,12,16.622s4.622-2.069,4.622-4.622S14.552,7.378,12,7.378z M12,15 c-1.657,0-3-1.343-3-3s1.343-3,3-3s3,1.343,3,3S13.657,15,12,15z M16.804,6.116c-0.596,0-1.08,0.484-1.08,1.08 s0.484,1.08,1.08,1.08c0.596,0,1.08-0.484,1.08-1.08S17.401,6.116,16.804,6.116z"></path></svg></a></li>
+<li id="menu-item-27" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-27"><a href="https://pinterest.com"><span class="screen-reader-text">Pinterest</span><svg class="svg-icon" width="26" height="26" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M12.289,2C6.617,2,3.606,5.648,3.606,9.622c0,1.846,1.025,4.146,2.666,4.878c0.25,0.111,0.381,0.063,0.439-0.169 c0.044-0.175,0.267-1.029,0.365-1.428c0.032-0.128,0.017-0.237-0.091-0.362C6.445,11.911,6.01,10.75,6.01,9.668 c0-2.777,2.194-5.464,5.933-5.464c3.23,0,5.49,2.108,5.49,5.122c0,3.407-1.794,5.768-4.13,5.768c-1.291,0-2.257-1.021-1.948-2.277 c0.372-1.495,1.089-3.112,1.089-4.191c0-0.967-0.542-1.775-1.663-1.775c-1.319,0-2.379,1.309-2.379,3.059 c0,1.115,0.394,1.869,0.394,1.869s-1.302,5.279-1.54,6.261c-0.405,1.666,0.053,4.368,0.094,4.604 c0.021,0.126,0.167,0.169,0.25,0.063c0.129-0.165,1.699-2.419,2.142-4.051c0.158-0.59,0.817-2.995,0.817-2.995 c0.43,0.784,1.681,1.446,3.013,1.446c3.963,0,6.822-3.494,6.822-7.833C20.394,5.112,16.849,2,12.289,2"></path></svg></a></li>
+<li id="menu-item-28" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-28"><a href="https://wordpress.com"><span class="screen-reader-text">WordPress</span><svg class="svg-icon" width="26" height="26" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M12.158,12.786L9.46,20.625c0.806,0.237,1.657,0.366,2.54,0.366c1.047,0,2.051-0.181,2.986-0.51 c-0.024-0.038-0.046-0.079-0.065-0.124L12.158,12.786z M3.009,12c0,3.559,2.068,6.634,5.067,8.092L3.788,8.341 C3.289,9.459,3.009,10.696,3.009,12z M18.069,11.546c0-1.112-0.399-1.881-0.741-2.48c-0.456-0.741-0.883-1.368-0.883-2.109 c0-0.826,0.627-1.596,1.51-1.596c0.04,0,0.078,0.005,0.116,0.007C16.472,3.904,14.34,3.009,12,3.009 c-3.141,0-5.904,1.612-7.512,4.052c0.211,0.007,0.41,0.011,0.579,0.011c0.94,0,2.396-0.114,2.396-0.114 C7.947,6.93,8.004,7.642,7.52,7.699c0,0-0.487,0.057-1.029,0.085l3.274,9.739l1.968-5.901l-1.401-3.838 C9.848,7.756,9.389,7.699,9.389,7.699C8.904,7.67,8.961,6.93,9.446,6.958c0,0,1.484,0.114,2.368,0.114 c0.94,0,2.397-0.114,2.397-0.114c0.485-0.028,0.542,0.684,0.057,0.741c0,0-0.488,0.057-1.029,0.085l3.249,9.665l0.897-2.996 C17.841,13.284,18.069,12.316,18.069,11.546z M19.889,7.686c0.039,0.286,0.06,0.593,0.06,0.924c0,0.912-0.171,1.938-0.684,3.22 l-2.746,7.94c2.673-1.558,4.47-4.454,4.47-7.771C20.991,10.436,20.591,8.967,19.889,7.686z M12,22C6.486,22,2,17.514,2,12 C2,6.486,6.486,2,12,2c5.514,0,10,4.486,10,10C22,17.514,17.514,22,12,22z"></path></svg></a></li>
+</ul></div>	</nav><!-- .social-navigation -->
+	</div><!-- .site-header-wrap -->
+</header><!-- #masthead -->
+
+	<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main">
+
+			
+<article id="post-134" class="post-134 page type-page status-publish hentry entry">
+
+	<header class="entry-header">
+		
+<h1 class="entry-title">BreakOut２ investment Blog</h1>
+	</header>
+	
+	
+	<div class="entry-content">
+		
+<div class="wp-block-cover alignfull has-foreground-background-color has-background-dim" style="min-height:291px;"><img data-attachment-id="175" data-permalink="https://breakout2.com/breakout2-min/" data-orig-file="https://breakout2.files.wordpress.com/2021/03/breakout2-min.png" data-orig-size="960,250" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="BreakOut2-min" data-image-description="" data-image-caption="" data-medium-file="https://breakout2.files.wordpress.com/2021/03/breakout2-min.png?w=300" data-large-file="https://breakout2.files.wordpress.com/2021/03/breakout2-min.png?w=750" class="wp-block-cover__image-background wp-image-175" alt="" src="https://breakout2.files.wordpress.com/2021/03/breakout2-min.png" data-object-fit="cover" /><div class="wp-block-cover__inner-container">
+<p class="has-text-align-center has-large-font-size"></p>
+</div></div>
+
+
+
+<h4>記事カテゴリ</h4>
+
+
+
+<div class="wp-container-62066d48854f0 wp-block-columns alignwide">
+<div class="wp-block-column">
+<figure class="wp-block-image size-large"><a href="https://breakout2.com/301-2/"><img data-attachment-id="518" data-permalink="https://breakout2.com/%e6%a0%aa%e3%80%80%e3%82%b5%e3%83%a0%e3%83%8d-min/" data-orig-file="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png" data-orig-size="1280,720" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="株　サムネ-min" data-image-description="" data-image-caption="" data-medium-file="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=300" data-large-file="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=750" src="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=750" alt="" class="wp-image-518" srcset="https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=750 750w, https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=150 150w, https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=300 300w, https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=768 768w, https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png?w=1024 1024w, https://breakout2.files.wordpress.com/2021/03/e6a0aae38080e382b5e383a0e3838d-min.png 1280w" sizes="(max-width: 750px) 100vw, 750px" /></a></figure>
+
+
+
+<p class="wp-elements-62066d488414c has-link-color"><a href="https://breakout2.com/301-2/">米株や日本株に関する考察、知識、注目銘柄など</a></p>
+</div>
+
+
+
+<div class="wp-block-column">
+<figure class="wp-block-image size-large"><a href="https://breakout2.com/401-2/"><img data-attachment-id="519" data-permalink="https://breakout2.com/fx%e3%80%80%e3%82%b5%e3%83%a0%e3%83%8d-min/" data-orig-file="https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png" data-orig-size="1280,720" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="FX　サムネ-min" data-image-description="" data-image-caption="" data-medium-file="https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=300" data-large-file="https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=750" src="https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=750" alt="" class="wp-image-519" srcset="https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=750 750w, https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=150 150w, https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=300 300w, https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=768 768w, https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png?w=1024 1024w, https://breakout2.files.wordpress.com/2021/03/fxe38080e382b5e383a0e3838d-min.png 1280w" sizes="(max-width: 750px) 100vw, 750px" /></a></figure>
+
+
+
+<p class="has-link-color"><a href="https://breakout2.com/401-2/"><span style="text-decoration:underline;">FXやCFDなどのレバレッジを利用した取引について</span></a><span style="text-decoration:underline;"></span></p>
+</div>
+
+
+
+<div class="wp-block-column">
+<figure class="wp-block-image size-large"><a href="https://breakout2.com/222-2/"><img data-attachment-id="520" data-permalink="https://breakout2.com/%e4%bb%ae%e6%83%b3%e9%80%9a%e8%b2%a8%e3%80%80%e3%82%b5%e3%83%a0%e3%83%8d-min/" data-orig-file="https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png" data-orig-size="1280,720" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="仮想通貨　サムネ-min" data-image-description="" data-image-caption="" data-medium-file="https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=300" data-large-file="https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=750" src="https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=750" alt="" class="wp-image-520" srcset="https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=750 750w, https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=150 150w, https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=300 300w, https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=768 768w, https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png?w=1024 1024w, https://breakout2.files.wordpress.com/2021/03/e4bbaee683b3e9809ae8b2a8e38080e382b5e383a0e3838d-min.png 1280w" sizes="(max-width: 750px) 100vw, 750px" /></a></figure>
+
+
+
+<p class="has-link-color"><a href="https://breakout2.com/222-2/">仮想通貨にまつわる技術の話や、現在のトレンド</a></p>
+</div>
+</div>
+
+
+
+<hr class="wp-block-separator" />
+
+
+
+<div class="wp-container-62066d48875cc wp-block-columns alignwide">
+<div class="wp-block-column">
+<div class="wp-container-62066d48870a5 wp-block-group"><div class="wp-block-group__inner-container">
+<h4>最新の投稿</h4>
+
+
+<ul class="wp-block-latest-posts__list has-dates wp-block-latest-posts"><li><a href="https://breakout2.com/2021/11/09/home-mining/">【重要】自宅PC、リグの災害対策</a><time datetime="2021-11-09T03:47:16+09:00" class="wp-block-latest-posts__post-date">2021年11月9日</time></li>
+<li><a href="https://breakout2.com/2021/09/19/smartnews-unicorn/">【スマニュー】ダブルユニコーンの仲間入り！今後期待のユニコーン企業とは！？</a><time datetime="2021-09-19T15:12:00+09:00" class="wp-block-latest-posts__post-date">2021年9月19日</time></li>
+<li><a href="https://breakout2.com/2021/08/24/8gatu-yutai/">【比較】8月の株主優待</a><time datetime="2021-08-24T14:38:44+09:00" class="wp-block-latest-posts__post-date">2021年8月24日</time></li>
+<li><a href="https://breakout2.com/2021/07/09/pallet-ieo/">【国内初IEO】パレットトークンとは</a><time datetime="2021-07-09T03:27:45+09:00" class="wp-block-latest-posts__post-date">2021年7月9日</time></li>
+<li><a href="https://breakout2.com/2021/06/18/cryptact-compe/">【景品付き】株デモトレ大会参加方法</a><time datetime="2021-06-18T19:03:01+09:00" class="wp-block-latest-posts__post-date">2021年6月18日</time></li>
+</ul>
+
+
+<div class="wp-container-62066d488665b wp-block-columns">
+<div class="wp-block-column"></div>
+
+
+
+<div class="wp-block-column"></div>
+
+
+
+<div class="wp-block-column"><form role="search" method="get" action="https://breakout2.com/" class="wp-block-search__button-inside wp-block-search__icon-button wp-block-search"><label for="wp-block-search__input-1" class="wp-block-search__label">検索</label><div class="wp-block-search__inside-wrapper "  style="width:239px;"><input type="search" id="wp-block-search__input-1" class="wp-block-search__input " name="s" value="" placeholder=""  required /><button type="submit" class="wp-block-search__button  has-icon" ><svg id="search-icon" class="search-icon" viewBox="0 0 24 24" width="24" height="24">
+			        <path d="M13.5 6C10.5 6 8 8.5 8 11.5c0 1.1.3 2.1.9 3l-3.4 3 1 1.1 3.4-2.9c1 .9 2.2 1.4 3.6 1.4 3 0 5.5-2.5 5.5-5.5C19 8.5 16.5 6 13.5 6zm0 9.5c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"></path>
+			    </svg></button></div></form></div>
+</div>
+
+
+
+<div class="wp-container-62066d4886b75 wp-block-columns">
+<div class="wp-block-column" style="flex-basis:25%;"></div>
+
+
+
+<div class="wp-block-column" style="flex-basis:50%;">
+<a href="https://px.a8.net/svt/ejp?a8mat=3H7U75+198YR6+50+2HLY9D" rel="nofollow">
+<img alt="" src="https://www25.a8.net/svt/bgt?aid=210317729076&amp;wid=001&amp;eno=01&amp;mid=s00000000018015051000&amp;mc=1" width="728" height="90" border="0"></a>
+<img src="https://www18.a8.net/0.gif?a8mat=3H7U75+198YR6+50+2HLY9D" alt="" width="1" height="1" border="0">
+</div>
+
+
+
+<div class="wp-block-column" style="flex-basis:25%;"></div>
+</div>
+</div></div>
+</div>
+</div>
+
+
+
+<div class="wp-container-62066d4888014 wp-block-group alignfull has-background-light-background-color has-background"><div class="wp-block-group__inner-container">
+<div style="height:80px;" aria-hidden="true" class="wp-block-spacer desktop-only"></div>
+
+
+
+<div class="wp-container-62066d4887b18 wp-block-columns alignwide">
+<div class="wp-block-column">
+<h5>運営紹介</h5>
+
+
+
+<p>投資サークルで活動する大学生が運営するブログです<br>株から仮想通貨まで、投資全般に関わるアイデアを提供します</p>
+
+
+
+<p class="has-text-align-left"><a href="https://breakout2.com/contact/">詳細を確認する</a></p>
+
+
+
+<p class="has-text-align-left"><a href="https://breakout2.com/contact/">お問い合わせもこちらから</a></p>
+
+
+
+<p><a rel="noreferrer noopener" href="https://breakout2.com/388-2/" target="_blank">プライバシーポリシー</a></p>
+
+
+
+<p><a href="https://breakout2.com/%e5%85%8d%e8%b2%ac%e4%ba%8b%e9%a0%85/?frame-nonce=e2116d4daf">免責事項</a></p>
+</div>
+
+
+
+<div class="wp-block-column"></div>
+
+
+
+<div class="wp-block-column">
+<a href="https://px.a8.net/svt/ejp?a8mat=3H7U75+198YR6+50+2HXIXD" rel="nofollow">
+<img alt="" src="https://www27.a8.net/svt/bgt?aid=210317729076&amp;wid=001&amp;eno=01&amp;mid=s00000000018015105000&amp;mc=1" width="300" height="250" border="0"></a>
+<img src="https://www19.a8.net/0.gif?a8mat=3H7U75+198YR6+50+2HXIXD" alt="" width="1" height="1" border="0">
+</div>
+</div>
+
+
+
+<div style="height:80px;" aria-hidden="true" class="wp-block-spacer desktop-only"></div>
+</div></div>
+
+
+
+<p></p>
+<div id="jp-post-flair" class="sharedaddy sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">共有:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-134" class="share-twitter sd-button share-icon" href="https://breakout2.com/?share=twitter" target="_blank" title="クリックして Twitter で共有"><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-134" class="share-facebook sd-button share-icon" href="https://breakout2.com/?share=facebook" target="_blank" title="Facebook で共有するにはクリックしてください"><span>Facebook</span></a></li><li class="share-end"></li></ul></div></div></div></div>	</div><!-- .entry-content -->
+
+	</article><!-- #post-134 -->
+
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+
+	</div><!-- #content -->
+
+	
+	<footer id="colophon" class="site-footer responsive-max-width">
+			
+	<aside class="widget-area responsive-max-width" role="complementary" aria-label="フッター">
+		<section id="top-posts-3" class="widget widget_top-posts"><h2 class="widget-title">人気の投稿</h2><ul class='widgets-list-layout no-grav'>
+					<li>
+						<a href="https://breakout2.com/2021/07/09/pallet-ieo/" title="【国内初IEO】パレットトークンとは" class="bump-view" data-bump-view="tp">
+								<img width="40" height="40" src="https://breakout2.files.wordpress.com/2021/07/plt-1.jpg?resize=40%2C40" alt="【国内初IEO】パレットトークンとは" data-pin-nopin="true" class="widgets-list-layout-blavatar"/>
+							</a>
+							<div class="widgets-list-layout-links">
+								<a href="https://breakout2.com/2021/07/09/pallet-ieo/" title="【国内初IEO】パレットトークンとは" class="bump-view" data-bump-view="tp">【国内初IEO】パレットトークンとは</a>
+							</div>
+													</li>
+						</ul>
+</section><section id="wp_tag_cloud-3" class="widget wp_widget_tag_cloud"><h2 class="widget-title">人気のテーマ</h2><div style="overflow:hidden"><a href="https://breakout2.com/tag/aave/" class="tag-cloud-link tag-link-2978655 tag-link-position-1" style="font-size: 8pt;" aria-label="AAVE (1個の項目)">AAVE</a>
+<a href="https://breakout2.com/tag/appiergroup/" class="tag-cloud-link tag-link-716710332 tag-link-position-2" style="font-size: 8pt;" aria-label="AppierGroup (1個の項目)">AppierGroup</a>
+<a href="https://breakout2.com/tag/cbdc/" class="tag-cloud-link tag-link-23741298 tag-link-position-3" style="font-size: 8pt;" aria-label="CBDC (1個の項目)">CBDC</a>
+<a href="https://breakout2.com/tag/cfd/" class="tag-cloud-link tag-link-6338 tag-link-position-4" style="font-size: 10.709677419355pt;" aria-label="CFD (2個の項目)">CFD</a>
+<a href="https://breakout2.com/tag/cygames/" class="tag-cloud-link tag-link-28376523 tag-link-position-5" style="font-size: 8pt;" aria-label="Cygames (1個の項目)">Cygames</a>
+<a href="https://breakout2.com/tag/defi/" class="tag-cloud-link tag-link-1125895 tag-link-position-6" style="font-size: 10.709677419355pt;" aria-label="DeFi (2個の項目)">DeFi</a>
+<a href="https://breakout2.com/tag/dx/" class="tag-cloud-link tag-link-128641 tag-link-position-7" style="font-size: 8pt;" aria-label="DX (1個の項目)">DX</a>
+<a href="https://breakout2.com/tag/eip-1559/" class="tag-cloud-link tag-link-715610987 tag-link-position-8" style="font-size: 10.709677419355pt;" aria-label="EIP-1559 (2個の項目)">EIP-1559</a>
+<a href="https://breakout2.com/tag/eth/" class="tag-cloud-link tag-link-484113 tag-link-position-9" style="font-size: 16.279569892473pt;" aria-label="ETH (6個の項目)">ETH</a>
+<a href="https://breakout2.com/tag/e%e3%82%b9%e3%83%9d%e3%83%bc%e3%83%84/" class="tag-cloud-link tag-link-69226765 tag-link-position-10" style="font-size: 8pt;" aria-label="eスポーツ (1個の項目)">eスポーツ</a>
+<a href="https://breakout2.com/tag/ff%e9%87%91%e5%88%a9/" class="tag-cloud-link tag-link-286265405 tag-link-position-11" style="font-size: 8pt;" aria-label="FF金利 (1個の項目)">FF金利</a>
+<a href="https://breakout2.com/tag/fomc/" class="tag-cloud-link tag-link-431680 tag-link-position-12" style="font-size: 8pt;" aria-label="FOMC (1個の項目)">FOMC</a>
+<a href="https://breakout2.com/tag/g-next/" class="tag-cloud-link tag-link-92136287 tag-link-position-13" style="font-size: 8pt;" aria-label="G-NEXT (1個の項目)">G-NEXT</a>
+<a href="https://breakout2.com/tag/iplug/" class="tag-cloud-link tag-link-11838489 tag-link-position-14" style="font-size: 8pt;" aria-label="iplug (1個の項目)">iplug</a>
+<a href="https://breakout2.com/tag/ipo/" class="tag-cloud-link tag-link-18477 tag-link-position-15" style="font-size: 22pt;" aria-label="IPO (16個の項目)">IPO</a>
+<a href="https://breakout2.com/tag/ipo%e3%83%88%e3%83%ac%e3%83%bc%e3%83%89/" class="tag-cloud-link tag-link-715887580 tag-link-position-16" style="font-size: 8pt;" aria-label="IPOトレード (1個の項目)">IPOトレード</a>
+<a href="https://breakout2.com/tag/kaizenplatform/" class="tag-cloud-link tag-link-347214538 tag-link-position-17" style="font-size: 8pt;" aria-label="kaizenplatform (1個の項目)">kaizenplatform</a>
+<a href="https://breakout2.com/tag/sharinginnovation/" class="tag-cloud-link tag-link-716379225 tag-link-position-18" style="font-size: 8pt;" aria-label="SharingInnovation (1個の項目)">SharingInnovation</a>
+<a href="https://breakout2.com/tag/spiderplus/" class="tag-cloud-link tag-link-89763319 tag-link-position-19" style="font-size: 8pt;" aria-label="SpiderPlus (1個の項目)">SpiderPlus</a>
+<a href="https://breakout2.com/tag/topix/" class="tag-cloud-link tag-link-243809 tag-link-position-20" style="font-size: 8pt;" aria-label="TOPIX (1個の項目)">TOPIX</a>
+<a href="https://breakout2.com/tag/tsi/" class="tag-cloud-link tag-link-68835 tag-link-position-21" style="font-size: 8pt;" aria-label="TSI (1個の項目)">TSI</a>
+<a href="https://breakout2.com/tag/uniswap/" class="tag-cloud-link tag-link-697399350 tag-link-position-22" style="font-size: 8pt;" aria-label="Uniswap (1個の項目)">Uniswap</a>
+<a href="https://breakout2.com/tag/%e3%82%a2%e3%83%bc%e3%83%93%e3%83%88%e3%83%a9%e3%83%bc%e3%82%b8/" class="tag-cloud-link tag-link-114798624 tag-link-position-23" style="font-size: 8pt;" aria-label="アービトラージ (1個の項目)">アービトラージ</a>
+<a href="https://breakout2.com/tag/%e3%82%a4%e3%83%bc%e3%82%b5%e3%83%aa%e3%82%a2%e3%83%a0/" class="tag-cloud-link tag-link-256654572 tag-link-position-24" style="font-size: 17.032258064516pt;" aria-label="イーサリアム (7個の項目)">イーサリアム</a>
+<a href="https://breakout2.com/tag/%e3%82%a4%e3%83%bc%e3%83%bb%e3%83%ad%e3%82%b8%e3%83%83%e3%83%88/" class="tag-cloud-link tag-link-714843631 tag-link-position-25" style="font-size: 8pt;" aria-label="イー・ロジット (1個の項目)">イー・ロジット</a>
+<a href="https://breakout2.com/tag/%e3%82%a6%e3%82%a4%e3%83%b3%e3%82%b0%e3%82%a2%e3%83%bc%e3%82%af/" class="tag-cloud-link tag-link-33389520 tag-link-position-26" style="font-size: 8pt;" aria-label="ウイングアーク (1個の項目)">ウイングアーク</a>
+<a href="https://breakout2.com/tag/%e3%82%a6%e3%83%9e%e5%a8%98/" class="tag-cloud-link tag-link-476906941 tag-link-position-27" style="font-size: 8pt;" aria-label="ウマ娘 (1個の項目)">ウマ娘</a>
+<a href="https://breakout2.com/tag/%e3%82%a8%e3%82%a4%e3%83%94%e3%82%a2%e3%82%b0%e3%83%ab%e3%83%bc%e3%83%97/" class="tag-cloud-link tag-link-716710335 tag-link-position-28" style="font-size: 8pt;" aria-label="エイピアグループ (1個の項目)">エイピアグループ</a>
+<a href="https://breakout2.com/tag/%e3%82%aa%e3%83%bc%e3%82%b1%e3%82%b9%e3%83%88%e3%83%a9hd/" class="tag-cloud-link tag-link-716379238 tag-link-position-29" style="font-size: 8pt;" aria-label="オーケストラHD (1個の項目)">オーケストラHD</a>
+<a href="https://breakout2.com/tag/%e3%82%ab%e3%83%aa%e3%83%96/" class="tag-cloud-link tag-link-21649141 tag-link-position-30" style="font-size: 8pt;" aria-label="カリブ (1個の項目)">カリブ</a>
+<a href="https://breakout2.com/tag/%e3%82%b5%e3%82%a4%e3%83%90%e3%83%bc%e3%82%a8%e3%83%bc%e3%82%b8%e3%82%a7%e3%83%b3%e3%83%88/" class="tag-cloud-link tag-link-20523509 tag-link-position-31" style="font-size: 8pt;" aria-label="サイバーエージェント (1個の項目)">サイバーエージェント</a>
+<a href="https://breakout2.com/tag/%e3%82%b5%e3%83%9e%e3%83%bc%e3%82%bf%e3%82%a4%e3%83%a0/" class="tag-cloud-link tag-link-17809587 tag-link-position-32" style="font-size: 8pt;" aria-label="サマータイム (1個の項目)">サマータイム</a>
+<a href="https://breakout2.com/tag/%e3%82%b7%e3%82%a7%e3%82%a2%e3%83%aa%e3%83%b3%e3%82%b0%e3%82%a4%e3%83%8e%e3%83%99%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3/" class="tag-cloud-link tag-link-716379232 tag-link-position-33" style="font-size: 8pt;" aria-label="シェアリングイノベーション (1個の項目)">シェアリングイノベーション</a>
+<a href="https://breakout2.com/tag/%e3%82%b7%e3%82%ad%e3%83%8e%e3%83%8f%e3%82%a4%e3%83%86%e3%83%83%e3%82%af/" class="tag-cloud-link tag-link-714709017 tag-link-position-34" style="font-size: 8pt;" aria-label="シキノハイテック (1個の項目)">シキノハイテック</a>
+<a href="https://breakout2.com/tag/%e3%82%b8%e3%83%bc%e3%83%8d%e3%82%af%e3%82%b9%e3%83%88/" class="tag-cloud-link tag-link-715040197 tag-link-position-35" style="font-size: 8pt;" aria-label="ジーネクスト (1個の項目)">ジーネクスト</a>
+<a href="https://breakout2.com/tag/%e3%82%b9%e3%83%91%e3%82%a4%e3%83%80%e3%83%bc%e3%83%97%e3%83%a9%e3%82%b9/" class="tag-cloud-link tag-link-715178584 tag-link-position-36" style="font-size: 8pt;" aria-label="スパイダープラス (1個の項目)">スパイダープラス</a>
+<a href="https://breakout2.com/tag/%e3%83%86%e3%82%a3%e3%83%bc%e3%82%a8%e3%82%b9%e3%82%a2%e3%82%a4/" class="tag-cloud-link tag-link-715887598 tag-link-position-37" style="font-size: 8pt;" aria-label="ティーエスアイ (1個の項目)">ティーエスアイ</a>
+<a href="https://breakout2.com/tag/%e3%83%87%e3%82%a3%e3%83%95%e3%82%a1%e3%82%a4/" class="tag-cloud-link tag-link-523914089 tag-link-position-38" style="font-size: 8pt;" aria-label="ディファイ (1個の項目)">ディファイ</a>
+<a href="https://breakout2.com/tag/%e3%83%87%e3%82%a3%e3%83%bc%e3%83%95%e3%82%a1%e3%82%a4/" class="tag-cloud-link tag-link-716576621 tag-link-position-39" style="font-size: 8pt;" aria-label="ディーファイ (1個の項目)">ディーファイ</a>
+<a href="https://breakout2.com/tag/%e3%83%87%e3%82%a4%e3%83%88%e3%83%ac/" class="tag-cloud-link tag-link-37138498 tag-link-position-40" style="font-size: 8pt;" aria-label="デイトレ (1個の項目)">デイトレ</a>
+<a href="https://breakout2.com/tag/%e3%83%88%e3%83%bc%e3%82%af%e3%83%b3/" class="tag-cloud-link tag-link-32669468 tag-link-position-41" style="font-size: 8pt;" aria-label="トークン (1個の項目)">トークン</a>
+<a href="https://breakout2.com/tag/%e3%83%92%e3%83%a5%e3%83%bc%e3%83%9e%e3%83%b3%e3%82%af%e3%83%aa%e3%82%a8%e3%82%a4%e3%82%b7%e3%83%a7%e3%83%b3/" class="tag-cloud-link tag-link-715887584 tag-link-position-42" style="font-size: 8pt;" aria-label="ヒューマンクリエイション (1個の項目)">ヒューマンクリエイション</a>
+<a href="https://breakout2.com/tag/%e3%83%93%e3%83%83%e3%83%88%e3%82%b3%e3%82%a4%e3%83%b3/" class="tag-cloud-link tag-link-130129091 tag-link-position-43" style="font-size: 10.709677419355pt;" aria-label="ビットコイン (2個の項目)">ビットコイン</a>
+<a href="https://breakout2.com/tag/%e3%83%96%e3%83%ad%e3%83%bc%e3%83%89%e3%83%9e%e3%82%a4%e3%83%b3%e3%83%89/" class="tag-cloud-link tag-link-502177695 tag-link-position-44" style="font-size: 8pt;" aria-label="ブロードマインド (1個の項目)">ブロードマインド</a>
+<a href="https://breakout2.com/tag/%e3%83%99%e3%83%93%e3%83%bc%e3%82%ab%e3%83%ac%e3%83%b3%e3%83%80%e3%83%bc/" class="tag-cloud-link tag-link-714849884 tag-link-position-45" style="font-size: 8pt;" aria-label="ベビーカレンダー (1個の項目)">ベビーカレンダー</a>
+<a href="https://breakout2.com/tag/%e3%83%9e%e3%82%b6%e3%83%bc%e3%82%ba/" class="tag-cloud-link tag-link-10355709 tag-link-position-46" style="font-size: 8pt;" aria-label="マザーズ (1個の項目)">マザーズ</a>
+<a href="https://breakout2.com/tag/%e4%bb%8a%e9%80%b1%e3%81%aeipo/" class="tag-cloud-link tag-link-715888060 tag-link-position-47" style="font-size: 8pt;" aria-label="今週のIPO (1個の項目)">今週のIPO</a>
+<a href="https://breakout2.com/tag/%e4%bb%ae%e6%83%b3%e9%80%9a%e8%b2%a8/" class="tag-cloud-link tag-link-32963491 tag-link-position-48" style="font-size: 17.784946236559pt;" aria-label="仮想通貨 (8個の項目)">仮想通貨</a>
+<a href="https://breakout2.com/tag/%e5%86%ac%e6%99%82%e9%96%93/" class="tag-cloud-link tag-link-68032493 tag-link-position-49" style="font-size: 8pt;" aria-label="冬時間 (1個の項目)">冬時間</a>
+<a href="https://breakout2.com/tag/%e5%8f%96%e5%bc%95%e6%99%82%e9%96%93/" class="tag-cloud-link tag-link-256029589 tag-link-position-50" style="font-size: 8pt;" aria-label="取引時間 (1個の項目)">取引時間</a>
+<a href="https://breakout2.com/tag/%e6%94%bf%e7%ad%96%e9%87%91%e5%88%a9/" class="tag-cloud-link tag-link-22810096 tag-link-position-51" style="font-size: 8pt;" aria-label="政策金利 (1個の項目)">政策金利</a>
+<a href="https://breakout2.com/tag/%e6%97%a5%e6%9c%ac%e6%a0%aa/" class="tag-cloud-link tag-link-20915016 tag-link-position-52" style="font-size: 10.709677419355pt;" aria-label="日本株 (2個の項目)">日本株</a>
+<a href="https://breakout2.com/tag/%e6%97%a5%e7%b5%8c%e5%b9%b3%e5%9d%87/" class="tag-cloud-link tag-link-43733605 tag-link-position-53" style="font-size: 8pt;" aria-label="日経平均 (1個の項目)">日経平均</a>
+<a href="https://breakout2.com/tag/%e6%97%a5%e9%8a%80/" class="tag-cloud-link tag-link-41067677 tag-link-position-54" style="font-size: 8pt;" aria-label="日銀 (1個の項目)">日銀</a>
+<a href="https://breakout2.com/tag/%e6%97%a5%e9%8a%80%e8%b2%b7%e3%81%84%e6%94%af%e3%81%88/" class="tag-cloud-link tag-link-716398394 tag-link-position-55" style="font-size: 8pt;" aria-label="日銀買い支え (1個の項目)">日銀買い支え</a>
+<a href="https://breakout2.com/tag/%e6%9a%97%e5%8f%b7%e8%b3%87%e7%94%a3/" class="tag-cloud-link tag-link-609401617 tag-link-position-56" style="font-size: 10.709677419355pt;" aria-label="暗号資産 (2個の項目)">暗号資産</a>
+<a href="https://breakout2.com/tag/%e6%a0%aa/" class="tag-cloud-link tag-link-111731 tag-link-position-57" style="font-size: 15.225806451613pt;" aria-label="株 (5個の項目)">株</a>
+<a href="https://breakout2.com/tag/%e7%b1%b3%e5%9b%bd%e6%a0%aa/" class="tag-cloud-link tag-link-75486675 tag-link-position-58" style="font-size: 12.516129032258pt;" aria-label="米国株 (3個の項目)">米国株</a>
+<a href="https://breakout2.com/tag/%e9%89%b1%e5%b1%b1%e6%a0%aa/" class="tag-cloud-link tag-link-715895874 tag-link-position-59" style="font-size: 8pt;" aria-label="鉱山株 (1個の項目)">鉱山株</a>
+<a href="https://breakout2.com/tag/%e9%8a%85/" class="tag-cloud-link tag-link-6713219 tag-link-position-60" style="font-size: 8pt;" aria-label="銅 (1個の項目)">銅</a></div></section><section id="search-3" class="widget widget_search"><h2 class="widget-title">サイト内検索</h2><form role="search" method="get" class="search-form" action="https://breakout2.com/">
+				<label>
+					<span class="screen-reader-text">検索:</span>
+					<input type="search" class="search-field" placeholder="検索 &hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="検索" />
+			</form></section>	</aside><!-- .widget-area -->
+
+
+	
+		<div class="site-info">
+		<a class="site-name" href="https://breakout2.com/" rel="home">【公式】BreakOut２</a><span class="comma">,</span>
+<a href="https://wordpress.com/ja/?ref=footer_blog" rel="nofollow">WordPress.com Blog.</a>	</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+
+</div><!-- #page -->
+
+<!--  -->
+<script src='//0.gravatar.com/js/gprofiles.js?ver=202206y' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-morden actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>フォロー</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>フォロー中</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="https://breakout2.com">
+				<img alt='' src='https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=50' class='avatar avatar-50' height='50' width='50' />				【公式】BreakOut２			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">現在44人フォロワーがいます。</div>
+																					<div>
+										<input type="email" name="email" placeholder="メールアドレスを入力" class="actnbr-email-field" aria-label="メールアドレスを入力" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="190520822" />
+										<input type="hidden" name="source" value="https://breakout2.com/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="5ab9aa0d1a" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="登録する">
+												登録する											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											WordPress.com のアカウントをすでにお持ちですか ? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fbreakout2.com%252F">今すぐログイン</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="https://breakout2.com">
+				<img alt='' src='https://breakout2.files.wordpress.com/2021/03/e38396e383ade382b0e382a2e382a4e382b3e383b3.png?w=50' class='avatar avatar-50' height='50' width='50' />				【公式】BreakOut２			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://breakout2.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fbreakout2.wordpress.com%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>カスタマイズ</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>フォロー</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>フォロー中</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">登録</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fbreakout2.com%252F">ログイン</a></li>
+																	<li class="actnbr-shortlink"><a href="https://wp.me/PcTpau-2a">短縮リンクをコピー</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">このコンテンツを報告</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/blogs/190520822/posts/134">
+											Reader で投稿を表示										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">購読管理</a>
+									</li>
+																		<li class="actnbr-fold"><a href="">このバーを折りたたむ</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20211028";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+	<style>.wp-elements-62066d488414c a{color:var(--wp--preset--color--secondary);;}</style>
+<style>.wp-container-62066d48854f0 {display: flex;gap: 0.5em;flex-wrap: nowrap;align-items: center;}.wp-container-62066d48854f0 > * { margin: 0; }</style><style>.wp-container-62066d488665b {display: flex;gap: 0.5em;flex-wrap: nowrap;align-items: center;}.wp-container-62066d488665b > * { margin: 0; }</style><style>.wp-container-62066d4886b75 {display: flex;gap: 0.5em;flex-wrap: nowrap;align-items: center;}.wp-container-62066d4886b75 > * { margin: 0; }</style><style>.wp-container-62066d48870a5 .alignleft { float: left; margin-right: 2em; }.wp-container-62066d48870a5 .alignright { float: right; margin-left: 2em; }</style><style>.wp-container-62066d48875cc {display: flex;gap: 0.5em;flex-wrap: nowrap;align-items: center;}.wp-container-62066d48875cc > * { margin: 0; }</style><style>.wp-container-62066d4887b18 {display: flex;gap: 0.5em;flex-wrap: nowrap;align-items: center;}.wp-container-62066d4887b18 > * { margin: 0; }</style><style>.wp-container-62066d4888014 .alignleft { float: left; margin-right: 2em; }.wp-container-62066d4888014 .alignright { float: right; margin-left: 2em; }</style>		<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="写真のメタデータ表示を切り替え">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="写真のコメント表示を切り替え">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="この画像にはコメントがあります。"></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>コメントを読み込み中…</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">コメントをどうぞ</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="コメントをどうぞ"
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">メール (必須)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">名前 (必須)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">サイト</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="コメントを送信" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/breakout2.com\/":134};
+	</script>
+				<link rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/_static/??/wp-content/mu-plugins/carousel/swiper-bundle.css,/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1630955947j&cssminify=yes' type='text/css' media='all' />
+<script id='comment-like-js-extra'>
+var comment_like_text = {"loading":"\u8aad\u307f\u8fbc\u307f\u4e2d\u2026","swipeUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/comment-likes\/js\/lib\/swipe.js?ver=20131008"};
+</script>
+<script id='coblocks-lightbox-js-extra'>
+var coblocksLigthboxData = {"closeLabel":"Close Gallery","leftLabel":"\u524d","rightLabel":"\u6b21"};
+</script>
+<script id='jetpack-carousel-js-extra'>
+var jetpackSwiperLibraryPath = {"url":"\/wp-content\/mu-plugins\/carousel\/swiper-bundle.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"ja","ajaxurl":"https:\/\/breakout2.com\/wp-admin\/admin-ajax.php","nonce":"a2187a102e","display_exif":"1","display_comments":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"\u30b3\u30e1\u30f3\u30c8","post_comment":"\u30b3\u30e1\u30f3\u30c8\u3092\u9001\u4fe1","write_comment":"\u30b3\u30e1\u30f3\u30c8\u3092\u3069\u3046\u305e","loading_comments":"\u30b3\u30e1\u30f3\u30c8\u3092\u8aad\u307f\u8fbc\u307f\u4e2d\u2026","download_original":"\u30d5\u30eb\u30b5\u30a4\u30ba\u8868\u793a <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"\u30b3\u30e1\u30f3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u3054\u8a18\u5165\u304f\u3060\u3055\u3044\u3002","no_comment_email":"\u30b3\u30e1\u30f3\u30c8\u3059\u308b\u306b\u306f\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u3092\u3054\u8a18\u5165\u304f\u3060\u3055\u3044\u3002","no_comment_author":"\u30b3\u30e1\u30f3\u30c8\u3059\u308b\u306b\u306f\u304a\u540d\u524d\u3092\u3054\u8a18\u5165\u304f\u3060\u3055\u3044\u3002","comment_post_error":"\u30b3\u30e1\u30f3\u30c8\u6295\u7a3f\u306e\u969b\u306b\u30a8\u30e9\u30fc\u304c\u767a\u751f\u3057\u307e\u3057\u305f\u3002\u5f8c\u307b\u3069\u3082\u3046\u4e00\u5ea6\u304a\u8a66\u3057\u304f\u3060\u3055\u3044\u3002","comment_approved":"\u30b3\u30e1\u30f3\u30c8\u304c\u627f\u8a8d\u3055\u308c\u307e\u3057\u305f\u3002","comment_unapproved":"\u30b3\u30e1\u30f3\u30c8\u306f\u627f\u8a8d\u5f85\u3061\u4e2d\u3067\u3059\u3002","camera":"\u30ab\u30e1\u30e9","aperture":"\u7d5e\u308a","shutter_speed":"\u30b7\u30e3\u30c3\u30bf\u30fc\u30b9\u30d4\u30fc\u30c9","focal_length":"\u7126\u70b9\u8ddd\u96e2","copyright":"\u8457\u4f5c\u6a29\u8868\u793a","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/breakout2.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fbreakout2.com%2F","blog_id":"190520822","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=190520822&v=wpcom&tz=9&user_id=0&subd=breakout2","is_public":"1"};
+</script>
+<script id='sharing-js-js-extra'>
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??-eJyNkFluw0AIhi9UjJxIWR6qngXbUxtnFjRgp719iaKobSpZfQJ++NjwKtCXbCEbzopDWLkP8tHM+oI/UmkBicvIWbEvKbkEkS9Bb8wv4Rn8prpY+ovirmlPTQvKSWLAgdXuPe5pbzJO1pU/C9gUko+TpcOVKtMNksqJ6idkWnkk45I31qYhcYaOKiZSC9U9sEo+c+tWqmXREHEOJl4LD+EfDFzFP/MUbnBS1OA9ElfUyU/M48M69JZe28P+fNwfd6fz/AUJSaLl'></script>
+<script type='text/javascript'>
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-twitter' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-twitter' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+</script>
+	<script>
+	/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);
+	</script>
+	<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script><script src="//stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'190520822','blog_tz':'9','user_lang':'ja','blog_lang':'ja','user_id':'0'}]);
+_stq.push(['view', {'blog':'190520822','v':'wpcom','tz':'9','user_id':'0','post':'134','subd':'breakout2'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1TaVhzUzFMbjdWNHpwZGhTayxPSUFCMGNrd29+Smw0TDhnZmRTK0hlRi9QSGh6bi9GXVhBJWIlZlR5U1JMLU8/MkNtblkvY1d1RktDMn5CUWxvVnR4dkloOHhJTFZ5b28mT2xkLm9rV3d0NV82eWlZOGYwR21IeUpZc3g2aXNNPzFzaFZrcVQzRjRkUV9Dam80d1lhVXRrMmUyanQuYzdGZzZ4XTdGPy1+R11SSj9wQS90bm5oX0lHP2VEbUFNPWUyVz0mW18zfi1sakJONllraXVaQUs9b3BfanJjNzdzW3wtUTh1P342JjRMZ2FibU54RkYtW3g9eSV2M35KVjhCT2l2L19NVTZwQTV1c2s/SC9yYU5WSXJpTCxCQVgzSGNDenVdSQ=='}]);
+_stq.push([ 'clickTrackerInit', '190520822', '134' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>
